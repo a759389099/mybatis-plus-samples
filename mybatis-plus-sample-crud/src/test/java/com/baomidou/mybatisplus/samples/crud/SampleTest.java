@@ -56,7 +56,7 @@ public class SampleTest {
         userList.add(new User().setId((long)6).setAge(11).setName("测试人员1").setEmail("shk1.com"));
         userList.add(new User().setId((long)7).setAge(12).setName("测试人员2").setEmail("shk2.com"));
         userList.add(new User().setId((long)8).setAge(13).setName("测试人员3").setEmail("shk3.com"));
-        //这里还有问题
+        //这里还有问题，需要添加注入器
         mapper.insertBatchSomeColumn(userList);
         List<User> users = mapper.selectList(Wrappers.<User>lambdaQuery().orderByDesc(User::getId));
 
