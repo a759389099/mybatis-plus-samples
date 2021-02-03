@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.samples.crud.entity.User;
 import com.baomidou.mybatisplus.samples.crud.mapper.UserMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author hubin
  * @since 2018-08-11
  */
+@Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class SampleTest {
@@ -40,15 +43,33 @@ public class SampleTest {
         user.setName("小羊");
         user.setAge(3);
         user.setEmail("abc@mp.com");
+        //junit的api,如果参数为true，则Test success，否则Test Failed
+        //insert方法修改后，自动写好id
         assertThat(mapper.insert(user)).isGreaterThan(0);
         // 成功直接拿回写的 ID
         assertThat(user.getId()).isNotNull();
     }
 
+    @Test
+    public void saveBatch(){
+        List<User> userList =new ArrayList<>();
+        userList.add(new User().setId((long)6).setAge(11).setName("测试人员1").setEmail("shk1.com"));
+        userList.add(new User().setId((long)7).setAge(12).setName("测试人员2").setEmail("shk2.com"));
+        userList.add(new User().setId((long)8).setAge(13).setName("测试人员3").setEmail("shk3.com"));
+        //这里还有问题
+        mapper.insertBatchSomeColumn(userList);
+        List<User> users = mapper.selectList(Wrappers.<User>lambdaQuery().orderByDesc(User::getId));
+
+        for (User  u1:userList){
+            log.info(u1.toString());
+        }
+        assertThat(userList.get(0).getId()).isNotNull();
+    }
 
     @Test
     public void bDelete() {
         assertThat(mapper.deleteById(3L)).isGreaterThan(0);
+        //条件构造器
         assertThat(mapper.delete(new QueryWrapper<User>()
                 .lambda().eq(User::getName, "Sandy"))).isGreaterThan(0);
     }

@@ -34,6 +34,7 @@ public class SampleTest {
         user.setName("一一");
         Assert.assertTrue(mapper.insert(user) > 0);
         user = mapper.selectById(user.getId());
+        System.out.println(user);
         Assert.assertTrue(1 == user.getTenantId());
     }
 
